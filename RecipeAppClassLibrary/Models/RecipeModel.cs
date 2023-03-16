@@ -16,7 +16,7 @@ public class RecipeModel
 	public string Title { get; set; }
 
 	[Range(0, 5)]
-	public int Rating { get; set; }
+	public int? Rating { get; set; } = null;
 
 	public CuisineModel Cuisine { get; set; }
 

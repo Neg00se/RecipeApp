@@ -11,13 +11,13 @@ namespace RecipeAppClassLibrary.Data;
 public class RecipeAppDbContext : DbContext
 {
 
-    public RecipeAppDbContext(DbContextOptions options) : base(options)
-    {
-    }
+	public RecipeAppDbContext(DbContextOptions options) : base(options)
+	{
+	}
 
-    DbSet<UserModel> Users { get; set; }
-    DbSet<RecipeModel> Recipes { get; set; }
-    DbSet<MealModel> Meals { get; set; }
-    DbSet<DifficultyModel> Difficulty { get; set; }
-    DbSet<CuisineModel> Cuisines { get; set;}
+	public DbSet<UserModel> Users { get; set; }
+	public DbSet<RecipeModel> Recipes { get; set; }
+	public DbSet<MealModel> Meals { get; set; }
+	public DbSet<DifficultyModel> Difficulty { get; set; }
+	public DbSet<CuisineModel> Cuisines { get; set; }
 }

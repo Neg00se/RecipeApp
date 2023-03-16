@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RecipeAppClassLibrary.Data;
 
@@ -11,9 +12,11 @@ using RecipeAppClassLibrary.Data;
 namespace RecipeAppClassLibrary.Migrations
 {
     [DbContext(typeof(RecipeAppDbContext))]
-    partial class RecipeAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230316180229_NullableRecipeRating")]
+    partial class NullableRecipeRating
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
