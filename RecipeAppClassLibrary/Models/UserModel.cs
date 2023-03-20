@@ -10,8 +10,12 @@ namespace RecipeAppClassLibrary.Models;
 
 public class UserModel
 {
-    public Guid Id { get; set; }
-    public string ObjectIdentifier { get; set; } = null!;
+	public Guid Id { get; set; }
+
+
+	//TODO - delete these prop
+	public string ObjectIdentifier { get; set; } = null!;
+
 	[MaxLength(20)]
 	public string UserName { get; set; } = null!;
 	[MaxLength(50)]
