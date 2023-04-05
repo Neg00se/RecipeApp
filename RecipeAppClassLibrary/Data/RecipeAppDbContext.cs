@@ -17,7 +17,7 @@ public class RecipeAppDbContext : DbContext
 
 	public DbSet<UserModel> Users { get; set; }
 	public DbSet<RecipeModel> Recipes { get; set; }
-	public DbSet<MealModel> Meals { get; set; }
-	public DbSet<DifficultyModel> Difficulty { get; set; }
+	DbSet<MealModel> Meals { get; set; }
+	DbSet<DifficultyModel> Difficulty { get; set; }
 	public DbSet<CuisineModel> Cuisines { get; set; }
 }
