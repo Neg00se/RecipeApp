@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RecipeAppClassLibrary.Data;
@@ -8,6 +9,8 @@ namespace RecipeApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+
+
 public class RecipesController : ControllerBase
 {
 	private readonly RecipeAppDbContext _context;
@@ -18,9 +21,15 @@ public class RecipesController : ControllerBase
 	}
 
 	[HttpGet]
+	[Route("GetAllRecipes")]
 	public async Task<List<RecipeModel>> GetAllRecipes()
 	{
-		return await _context.Recipes.ToListAsync();
+		var allRecipes = await _context.Recipes.Include(c=> c.Cuisine)
+												.Include(d=> d.Difficulty)
+												.Include(m=>m.Meal)
+												.Include(u=> u.Author).ToListAsync();
+
+		return allRecipes;
 	}
 
 	[HttpPost]
