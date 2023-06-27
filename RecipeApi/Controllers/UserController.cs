@@ -23,13 +23,15 @@ public class UserController : ControllerBase
 
 
 	[HttpGet]
+	[Authorize]
+	[Route("Profile")]
 	public async Task<UserProfileModel> GetUserProfile()
 	{
-		var userId = User.Claims.FirstOrDefault(c => c.Type.Contains("objectidentifier"))?.Value;
+		var objectId = User.Claims.FirstOrDefault(c => c.Type.Contains("objectidentifier"))?.Value;
 
-		List<RecipeModel> recipes = _context.Recipes.Where(x => x.Author.Id.ToString() == userId).ToList();
+		var user = await _context.Users.FirstOrDefaultAsync(u => u.ObjectIdentifier == objectId);
 
-		var user = await _context.Users.FirstOrDefaultAsync(u => u.Id.ToString() == userId);
+		List<RecipeModel> recipes = _context.Recipes.Where(x => x.Author.Id == user.Id).ToList();
 
 
 		UserProfileModel profile = new()
@@ -47,7 +49,7 @@ public class UserController : ControllerBase
 
 	[HttpPost]
 
-	public async Task<IActionResult> CreateUser()
+	public async Task<IActionResult> CreateOrUpdateUser()
 	{
 		try
 		{
