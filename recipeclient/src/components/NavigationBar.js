@@ -6,7 +6,16 @@ import {
   useMsal,
 } from "@azure/msal-react";
 import { InteractionStatus } from "@azure/msal-browser";
-import { Nav, Dropdown, DropdownButton, Button, Navbar } from "react-bootstrap";
+import {
+  Nav,
+  NavDropdown,
+  Navbar,
+  Container,
+  Form,
+  Button,
+} from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { Link } from "react-router-dom";
 
 const NavigationBar = () => {
   const { instance, inProgress } = useMsal();
@@ -14,6 +23,7 @@ const NavigationBar = () => {
 
   if (instance) {
     activeAccount = instance.getActiveAccount();
+    console.log(activeAccount);
   }
 
   const handleLoginPopup = () => {
@@ -22,8 +32,8 @@ const NavigationBar = () => {
       .catch((error) => console.log(error));
   };
 
-  const hadleLogoutPopup = () => {
-    instance.logoutPopup({
+  const hadleLogout = () => {
+    instance.logoutRedirect({
       mainWindowRedirectUri: "/",
     });
   };
@@ -35,23 +45,58 @@ const NavigationBar = () => {
   };
 
   return (
-    <>
-      <Navbar bg="primary" variant="dark" className="navbarStyle">
-        <h3>Chelen)</h3>
-        <AuthenticatedTemplate>
-          <h1>Authenticated</h1>
-          <p>{activeAccount.name}</p>
-          <div className="collapse navbar-collapse justify-content-end">
-            <Button onClick={hadleLogoutPopup}>Sign Out</Button>
-          </div>
-        </AuthenticatedTemplate>
-        <UnauthenticatedTemplate>
-          <div className="collapse navbar-collapse justify-content-end">
-            <Button onClick={handleLoginPopup}>Sign In</Button>
-          </div>
-        </UnauthenticatedTemplate>
-      </Navbar>
-    </>
+    <Navbar bg="dark" variant="dark" expand="md" sticky="top">
+      <Container>
+        <Navbar.Brand as={Link} to="/">
+          Recipe Sharing
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="me-auto">
+            <Nav.Link as={Link} to="/">
+              Home
+            </Nav.Link>
+            <Nav.Link as={Link} to="createRecipe">
+              Create Recipe
+            </Nav.Link>
+            <Form className="d-flex mx-md-5">
+              <Form.Control
+                type="search"
+                placeholder="Search"
+                className="me-2"
+                aria-label="Search"
+              />
+              <Button variant="outline-success">Search</Button>
+            </Form>
+          </Nav>
+
+          <Nav>
+            <AuthenticatedTemplate>
+              <NavDropdown
+                title={activeAccount ? activeAccount.name : "chelen"}
+                id="basic-nav-dropdown"
+                menuVariant="dark"
+              >
+                <NavDropdown.Item as={Link} to="/profile:id">
+                  Profile
+                </NavDropdown.Item>
+                <NavDropdown.Item onClick={handleProfileEdit}>
+                  Edit Profile
+                </NavDropdown.Item>
+                <NavDropdown.Item href="#action/3.3">
+                  Something
+                </NavDropdown.Item>
+                <NavDropdown.Divider />
+                <NavDropdown.Item onClick={hadleLogout}>Exit</NavDropdown.Item>
+              </NavDropdown>
+            </AuthenticatedTemplate>
+            <UnauthenticatedTemplate>
+              <Nav.Link onClick={handleLoginPopup}>Log In</Nav.Link>
+            </UnauthenticatedTemplate>
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
   );
 };
 
