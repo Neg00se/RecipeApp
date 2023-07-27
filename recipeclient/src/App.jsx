@@ -1,12 +1,16 @@
 import { EventType } from "@azure/msal-browser";
-import { MsalProvider, useMsal } from "@azure/msal-react";
+import { useMsal } from "@azure/msal-react";
 import { useEffect } from "react";
 import { compareIssuingPolicy } from "./utils/claimUtils";
 import { b2cPolicies, protectedResourses } from "./authConfig";
-import { Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import PageLayout from "./components/PageLayout";
+import HomePage from "./pages/HomePage";
+import NavigationBar from "./components/NavigationBar";
+import ProfilePage from "./pages/ProfilePage";
+import CreateRecipe from "./pages/CreateRecipe";
 
-const Pages = () => {
+function App() {
   const { instance } = useMsal();
 
   useEffect(() => {
@@ -76,16 +80,15 @@ const Pages = () => {
     };
   }, [instance]);
 
-  return <Routes></Routes>;
-};
-
-function App({ instance }) {
   return (
-    <MsalProvider instance={instance}>
-      <PageLayout>
-        <Pages />
-      </PageLayout>
-    </MsalProvider>
+    <div className="App">
+      <NavigationBar />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="profile" element={<ProfilePage />} />
+        <Route path="createRecipe" element={<CreateRecipe />} />
+      </Routes>
+    </div>
   );
 }
 
