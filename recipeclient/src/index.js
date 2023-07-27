@@ -6,6 +6,10 @@ import { EventType, PublicClientApplication } from "@azure/msal-browser";
 import { msalConfig } from "./authConfig.js";
 import { BrowserRouter } from "react-router-dom";
 import { MsalProvider } from "@azure/msal-react";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { Provider } from "react-redux";
+import { store } from "./app/store";
 
 export const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -23,10 +27,14 @@ msalInstance.addEventCallback((event) => {
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <MsalProvider instance={msalInstance}>
-        <App />
-      </MsalProvider>
-    </BrowserRouter>
+    <Provider store={store}>
+      <BrowserRouter>
+        <MsalProvider instance={msalInstance}>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <App />
+          </LocalizationProvider>
+        </MsalProvider>
+      </BrowserRouter>
+    </Provider>
   </React.StrictMode>
 );

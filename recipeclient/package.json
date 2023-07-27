@@ -5,10 +5,18 @@
   "dependencies": {
     "@azure/msal-browser": "^2.34.0",
     "@azure/msal-react": "^1.5.4",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.13.6",
+    "@mui/x-date-pickers": "^6.9.0",
+    "@reduxjs/toolkit": "^1.9.5",
+    "axios": "^1.4.0",
     "bootstrap": "^5.2.3",
+    "date-fns": "^2.30.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.2",
     "react-dom": "^18.2.0",
+    "react-redux": "^8.1.1",
     "react-router-dom": "^6.9.0",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
