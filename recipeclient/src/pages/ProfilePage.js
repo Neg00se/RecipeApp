@@ -1,38 +1,56 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import UserInfo from "../components/UserInfo";
-import UserRecipes from "../components/UserRecipes";
-import useFetchWithMsal from "../hooks/useFetchWithMsal";
+import UserInfo from "../features/profiles/UserInfo";
+import UserRecipes from "../features/profiles/UserRecipes";
 import { protectedResourses } from "../authConfig";
+import { useMsal } from "@azure/msal-react";
+import { CacheLookupPolicy } from "@azure/msal-browser";
+import { useGetUserOwnProfileQuery } from "../features/profiles/profileSlice";
 
 const ProfilePage = () => {
-  const { error, execute } = useFetchWithMsal({
-    scopes: protectedResourses.recipeApi.scopes.readwrite,
-  });
+  const { instance } = useMsal();
 
-  const [profileData, setProfileData] = useState(null);
+  const [skip, setSkip] = useState(true);
+  const [accessToken, setAccessToken] = useState("");
 
   useEffect(() => {
-    execute("GET", protectedResourses.recipeApi.endpoints.profile).then(
-      (response) => {
-        console.log(response);
-        setProfileData(response);
-      }
-    );
-  }, [execute, profileData]);
+    const getToken = async () => {
+      const token = await instance.acquireTokenSilent({
+        scopes: protectedResourses.recipeApi.scopes.readwrite,
+        cacheLookupPolicy: CacheLookupPolicy.Default,
+      });
+      setAccessToken(await token.accessToken);
+      setSkip(false);
+    };
 
-  return (
-    <Container>
+    getToken();
+  }, [instance]);
+
+  const {
+    data: userProfile,
+    isLoading,
+    isSuccess,
+    isError,
+    error,
+  } = useGetUserOwnProfileQuery(accessToken, { skip });
+
+  //TODO: Write custom hook for acquiring token
+
+  let content;
+  if (isSuccess) {
+    content = (
       <Row>
-        <Col sm={3}>
-          <UserInfo />
+        <Col sm={4} md={3}>
+          <UserInfo id={userProfile.ids[0]} token={accessToken} />
         </Col>
-        <Col sm={9}>
-          <UserRecipes />
+        <Col md={9} sm={8}>
+          <UserRecipes id={userProfile.ids[0]} token={accessToken} />
         </Col>
       </Row>
-    </Container>
-  );
+    );
+  }
+
+  return <Container>{content}</Container>;
 };
 
 export default ProfilePage;
