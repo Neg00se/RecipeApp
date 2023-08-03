@@ -1,10 +1,15 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Row, Col, Image } from "react-bootstrap";
+import { useGetRecipesQuery } from "../features/recipes/recipeSlice";
 
-const Recipe = ({ recipe }) => {
+const Recipe = ({ recipeId }) => {
+  const { recipe } = useGetRecipesQuery("getRecipes", {
+    selectFromResult: ({ data }) => ({ recipe: data?.entities[recipeId] }),
+  });
+
   return (
-    <Row className="my-3 border">
+    <Row className=" border">
       <Col className="sm-3 xs-2">
         <Image src="https://picsum.photos/300" fluid />
       </Col>
