@@ -1,33 +1,53 @@
-import React, { useEffect, useState } from "react";
-import useFetchWithMsal from "../hooks/useFetchWithMsal";
-import { MsalAuthenticationTemplate } from "@azure/msal-react";
-import { EventType, InteractionType } from "@azure/msal-browser";
-import { protectedResourses, loginRequest } from "../authConfig";
-import Feed from "../components/Feed";
+import RecipeList from "../components/RecipeList";
 import Container from "react-bootstrap/Container";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Col } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
+import Spinner from "react-bootstrap/Spinner";
+import Info from "../features/info/Info";
+import { useGetRecipesQuery } from "../features/recipes/recipeSlice";
 
 const HomePage = () => {
-  const [recipesData, setRecipesData] = useState([]);
+  const {
+    data: recipes,
+    isLoading,
+    isSuccess,
+    isError,
+    error,
+  } = useGetRecipesQuery("getRecipes");
 
-  useEffect(() => {
-    fetch(protectedResourses.recipeApi.endpoints.getAll, {
-      method: "GET",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        setRecipesData(data);
-      });
-  }, []);
-
+  let content;
+  if (isLoading) {
+    content = (
+      <div className="spinner">
+        <h2>Loading</h2>
+        <Spinner
+          className="ms-2"
+          animation="border"
+          role="status"
+          variant="dark"
+        >
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </div>
+    );
+  } else if (isSuccess) {
+    content = (
+      <Row>
+        <Col md={3} xl={2}>
+          <Info />
+        </Col>
+        <Col>
+          <RecipeList recipes={recipes} />
+        </Col>
+      </Row>
+    );
+  } else if (isError) {
+    content = <p>{error}</p>;
+  }
   return (
     <div>
-      <h1>Hello</h1>
-      <Container>
-        <Feed recipes={recipesData} />
-      </Container>
+      <h1>Welcome to Recipe Sharing app</h1>
+      <Container>{content}</Container>
     </div>
   );
 };
