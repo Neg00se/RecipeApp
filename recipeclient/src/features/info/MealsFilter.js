@@ -1,11 +1,18 @@
 import React from "react";
-import { useGetMealsInfoQuery } from "./infoSlice";
+import { useGetMealsInfoQuery, categoryChecked } from "./infoSlice";
 import { Checkbox, FormControlLabel } from "@mui/material";
+import { useDispatch } from "react-redux";
 
-const MealsFilter = ({ mealId }) => {
-  const { meal } = useGetMealsInfoQuery("getMealsInfo", {
-    selectFromResult: ({ data }) => ({ meal: data?.entities[mealId] }),
-  });
+const TYPE = "meal";
+
+const MealsFilter = ({ meal }) => {
+  const dispatch = useDispatch();
+
+  const handleCheck = () => {
+    dispatch(
+      categoryChecked({ id: meal.id, checked: meal.checked, type: TYPE })
+    );
+  };
 
   return (
     <div className="my-1">
@@ -13,6 +20,7 @@ const MealsFilter = ({ mealId }) => {
         control={<Checkbox />}
         checked={meal.checked}
         label={meal.mealName}
+        onChange={handleCheck}
       />
     </div>
   );

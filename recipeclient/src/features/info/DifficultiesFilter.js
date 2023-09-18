@@ -1,13 +1,22 @@
 import React from "react";
-import { useGetDifficultiesInfoQuery } from "./infoSlice";
+import { useGetDifficultiesInfoQuery, categoryChecked } from "./infoSlice";
 import { Checkbox, FormControlLabel } from "@mui/material";
+import { useDispatch } from "react-redux";
 
-const DifficultiesFilter = ({ difficultyId }) => {
-  const { difficulty } = useGetDifficultiesInfoQuery("getDifficultiesInfo", {
-    selectFromResult: ({ data }) => ({
-      difficulty: data?.entities[difficultyId],
-    }),
-  });
+const TYPE = "difficulty";
+
+const DifficultiesFilter = ({ difficulty }) => {
+  const dispatch = useDispatch();
+
+  const handleCheck = () => {
+    dispatch(
+      categoryChecked({
+        id: difficulty.id,
+        checked: difficulty.checked,
+        type: TYPE,
+      })
+    );
+  };
 
   return (
     <div className="my-1">
@@ -15,6 +24,7 @@ const DifficultiesFilter = ({ difficultyId }) => {
         control={<Checkbox />}
         checked={difficulty.checked}
         label={difficulty.difficultyName}
+        onChange={handleCheck}
       />
     </div>
   );
