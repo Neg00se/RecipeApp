@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState, useMemo } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Row, Col, Container, Form, Button, Alert } from "react-bootstrap";
 import { TimePicker } from "@mui/x-date-pickers";
@@ -6,58 +6,76 @@ import {
   MsalAuthenticationTemplate,
   UnauthenticatedTemplate,
 } from "@azure/msal-react";
-import { InteractionType } from "@azure/msal-browser";
+import { CacheLookupPolicy, InteractionType } from "@azure/msal-browser";
 import { parseISO } from "date-fns";
-import useFetchWithMsal from "../hooks/useFetchWithMsal";
 import { protectedResourses } from "../authConfig";
+import { useCreateRecipeMutation } from "../features/recipes/recipeSlice";
+import {
+  useGetDifficultiesInfoQuery,
+  useGetMealsInfoQuery,
+} from "../features/info/infoSlice";
+import { useMsal } from "@azure/msal-react";
+import { useNavigate } from "react-router-dom";
 
 const CreateRecipe = () => {
+  const { instance } = useMsal();
+
   const [title, setTitle] = useState("");
   const [cuisine, setCuisine] = useState("");
   const [description, setDescription] = useState("");
   const [cookingTime, setCookingTime] = useState(parseISO("00:00:00"));
-  const [difficulty, setDifficulty] = useState("");
-  const [meal, setMeal] = useState("");
+  const [difficultyId, setDifficultyId] = useState("");
+  const [mealId, setMealId] = useState("");
   const [validated, setValidated] = useState(false);
   const [errormsg, setErrormsg] = useState("");
-  const { error, execute } = useFetchWithMsal({
-    scopes: protectedResourses.recipeApi.scopes.readwrite,
-  });
-  //TODO:remove hardcoded values
-  const difficultySet = ["easy", "medium", "hard"];
+
+  const [createRecipe, { isSuccess, isLoading }] = useCreateRecipeMutation();
+  const { data: difficulties, isSuccess: isDifficultySuccess } =
+    useGetDifficultiesInfoQuery();
+  const { data: meals, isSuccess: isMealSuccess } = useGetMealsInfoQuery();
+
+  const navigate = useNavigate();
+
+  const getToken = () => {
+    const token = instance.acquireTokenSilent({
+      scopes: protectedResourses.recipeApi.scopes.readwrite,
+      cacheLookupPolicy: CacheLookupPolicy.Default,
+    });
+    return token;
+  };
+
+  let retrieveToken;
+  const shareRecipe = async (recipe) => {
+    retrieveToken = await getToken();
+    await createRecipe({
+      recipe,
+      accessToken: retrieveToken.accessToken,
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setValidated(true);
     const form = e.currentTarget;
 
-    const data = {
+    const recipe = {
       id: 0,
       title,
       description,
       cookingTime,
-      difficulty: {
-        id: 0,
-        difficultyName: difficulty,
-        difficultyDescription: "chelen)",
-      },
-      meal: {
-        id: 0,
-        mealName: meal,
-        mealDescription: "anus)",
-      },
-      cuisine: {
-        id: 0,
-        cuisineName: cuisine,
-        cuisineDescription: "popka)",
-      },
+      difficultyId,
+      mealId,
     };
-    if (form.checkValidity() === true) {
-      execute(
-        "POST",
-        protectedResourses.recipeApi.endpoints.createRecipe,
-        data
-      );
+    if (form.checkValidity() === true && !isLoading) {
+      shareRecipe(recipe);
+
+      setTitle("");
+      setCookingTime(parseISO("00:00:00"));
+      setDescription("");
+      setDifficultyId("");
+      setMealId("");
+      setCuisine("");
+      navigate("/");
     }
   };
 
@@ -71,6 +89,24 @@ const CreateRecipe = () => {
     value.getMinutes() === 0 &&
     value.getHours() === 0 &&
     value.getSeconds() >= 0;
+
+  let difficultyOptions;
+  if (isDifficultySuccess) {
+    difficultyOptions = difficulties.ids.map((id) => (
+      <option key={id} value={id}>
+        {difficulties.entities[id].difficultyName}
+      </option>
+    ));
+  }
+
+  let mealOptions;
+  if (isMealSuccess) {
+    mealOptions = meals.ids.map((id) => (
+      <option key={id} value={id}>
+        {meals.entities[id].mealName}
+      </option>
+    ));
+  }
 
   return (
     <div>
@@ -107,15 +143,13 @@ const CreateRecipe = () => {
                     <Form.Select
                       required
                       aria-label="Select dish difficulty"
-                      value={difficulty}
-                      onChange={(e) => setDifficulty(e.target.value)}
+                      value={difficultyId}
+                      onChange={(e) => setDifficultyId(e.target.value)}
                     >
                       <option disabled value="">
                         Select difficulty
                       </option>
-                      <option value={difficultySet[0]}>Easy</option>
-                      <option value={difficultySet[1]}>Medium</option>
-                      <option value={difficultySet[2]}>Hard</option>
+                      {difficultyOptions}
                     </Form.Select>
                     <Form.Control.Feedback type="invalid">
                       Select suitable difficulty
@@ -124,14 +158,13 @@ const CreateRecipe = () => {
                   <Form.Group as={Col} controlId="Meal">
                     <Form.Label>Meal</Form.Label>
                     <Form.Select
-                      value={meal}
-                      onChange={(e) => setMeal(e.target.value)}
-                      search
+                      value={mealId}
+                      onChange={(e) => setMealId(e.target.value)}
                     >
-                      <option value="">none</option>
-                      <option value="breakfast">breakfast</option>
-                      <option value="dinner">dinner</option>
-                      <option value="supper">supper</option>
+                      <option disabled value="">
+                        Select difficulty
+                      </option>
+                      {mealOptions}
                     </Form.Select>
                   </Form.Group>
                 </Row>
@@ -143,7 +176,9 @@ const CreateRecipe = () => {
                     views={["hours", "minutes", "seconds"]}
                     defaultValue={cookingTime}
                     onChange={(newValue) =>
-                      setCookingTime(newValue.toLocaleTimeString())
+                      setCookingTime(
+                        newValue.toLocaleTimeString({ hour12: false })
+                      )
                     }
                     inputFormat="HH:mm:ss"
                     mask="__:__:__"
