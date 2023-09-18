@@ -1,17 +1,26 @@
-import { EventType } from "@azure/msal-browser";
+import { EventType, CacheLookupPolicy } from "@azure/msal-browser";
 import { useMsal } from "@azure/msal-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { compareIssuingPolicy } from "./utils/claimUtils";
 import { b2cPolicies, protectedResourses } from "./authConfig";
 import { Route, Routes } from "react-router-dom";
-import PageLayout from "./components/PageLayout";
 import HomePage from "./pages/HomePage";
 import NavigationBar from "./components/NavigationBar";
 import ProfilePage from "./pages/ProfilePage";
 import CreateRecipe from "./pages/CreateRecipe";
+import SingleRecipePage from "./pages/SingleRecipePage";
+import EditRecipePage from "./pages/EditRecipePage";
+import { useGetUserOwnProfileQuery } from "./features/profiles/profileSlice";
+import { skipToken } from "@reduxjs/toolkit/dist/query";
 
 function App() {
   const { instance } = useMsal();
+
+  const [token, setToken] = useState();
+
+  const { data, isLoading } = useGetUserOwnProfileQuery(
+    token ? token : skipToken
+  );
 
   useEffect(() => {
     const callbackId = instance.addEventCallback((event) => {
@@ -61,6 +70,21 @@ function App() {
         }
       }
 
+      if (event.eventType === EventType.LOGIN_SUCCESS) {
+        const getToken = async () => {
+          await instance
+            .acquireTokenSilent({
+              scopes: protectedResourses.recipeApi.scopes.readwrite,
+              cacheLookupPolicy: CacheLookupPolicy.Default,
+            })
+            .then((tokenResponse) => {
+              setToken(tokenResponse.accessToken);
+            });
+        };
+
+        getToken();
+      }
+
       if (event.eventType === EventType.LOGIN_FAILURE) {
         if (event.error && event.error.errorMessage.includes("AADB2C90118")) {
           const resetPasswordRequest = {
@@ -84,9 +108,20 @@ function App() {
     <div className="App">
       <NavigationBar />
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="profile" element={<ProfilePage />} />
-        <Route path="createRecipe" element={<CreateRecipe />} />
+        <Route path="/">
+          <Route index element={<HomePage />} />
+
+          <Route path="profile" element={<ProfilePage />} />
+
+          <Route path="recipe">
+            <Route index element={<CreateRecipe />} />
+            <Route path=":recipeId" element={<SingleRecipePage />} />
+            <Route
+              path="edit/:recipeId"
+              element={<EditRecipePage user={data} />}
+            />
+          </Route>
+        </Route>
       </Routes>
     </div>
   );
