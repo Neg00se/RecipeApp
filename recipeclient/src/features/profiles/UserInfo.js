@@ -17,7 +17,9 @@ const UserInfo = ({ id, token }) => {
       <Card>
         <Card.Img variant="top" src="https://picsum.photos/200/150" />
         <Card.Body>
-          <Card.Title>{username}</Card.Title>
+          <Card.Title>
+            <h1>{username}</h1>
+          </Card.Title>
           <Card.Text>{email}</Card.Text>
         </Card.Body>
 
