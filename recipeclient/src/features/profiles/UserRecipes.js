@@ -10,7 +10,7 @@ const UserRecipes = ({ id, token }) => {
   });
 
   const recipes = recipeList.map((recipe) => (
-    <UserProfileRecipe key={recipe.id} recipe={recipe} />
+    <UserProfileRecipe key={recipe.id} recipe={recipe} token={token} />
   ));
 
   return <div className="my-3">{recipes}</div>;

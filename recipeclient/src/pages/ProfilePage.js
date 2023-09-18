@@ -40,10 +40,10 @@ const ProfilePage = () => {
   if (isSuccess) {
     content = (
       <Row>
-        <Col sm={4} md={3}>
+        <Col md={4}>
           <UserInfo id={userProfile.ids[0]} token={accessToken} />
         </Col>
-        <Col md={9} sm={8}>
+        <Col md={8}>
           <UserRecipes id={userProfile.ids[0]} token={accessToken} />
         </Col>
       </Row>

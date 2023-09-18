@@ -56,7 +56,7 @@ const NavigationBar = () => {
             <Nav.Link as={Link} to="/">
               Home
             </Nav.Link>
-            <Nav.Link as={Link} to="createRecipe">
+            <Nav.Link as={Link} to="recipe">
               Create Recipe
             </Nav.Link>
             <Form className="d-flex mx-md-5">
@@ -77,7 +77,7 @@ const NavigationBar = () => {
                 id="basic-nav-dropdown"
                 menuVariant="dark"
               >
-                <NavDropdown.Item as={Link} to="/profile:id">
+                <NavDropdown.Item as={Link} to="profile">
                   Profile
                 </NavDropdown.Item>
                 <NavDropdown.Item onClick={handleProfileEdit}>
