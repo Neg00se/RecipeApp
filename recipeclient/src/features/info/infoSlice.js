@@ -34,7 +34,7 @@ export const infoSliceExtendedApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const infoSlice = createSlice({
+const infoSlice = createSlice({
   name: "filter",
   initialState: { meals: [], difficulties: [] },
   reducers: {
