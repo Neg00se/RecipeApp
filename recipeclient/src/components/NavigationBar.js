@@ -16,6 +16,7 @@ import {
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-router-dom";
+import SearchBar from "./SearchBar";
 
 const NavigationBar = () => {
   const { instance, inProgress } = useMsal();
@@ -59,15 +60,7 @@ const NavigationBar = () => {
             <Nav.Link as={Link} to="recipe">
               Create Recipe
             </Nav.Link>
-            <Form className="d-flex mx-md-5">
-              <Form.Control
-                type="search"
-                placeholder="Search"
-                className="me-2"
-                aria-label="Search"
-              />
-              <Button variant="outline-success">Search</Button>
-            </Form>
+            <SearchBar />
           </Nav>
 
           <Nav>
