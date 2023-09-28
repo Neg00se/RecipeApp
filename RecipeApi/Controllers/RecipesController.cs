@@ -12,7 +12,7 @@ namespace RecipeApi.Controllers;
 [ApiController]
 
 
-public  class RecipesController : ControllerBase
+public class RecipesController : ControllerBase
 {
 	private readonly RecipeAppDbContext _context;
 
@@ -23,19 +23,45 @@ public  class RecipesController : ControllerBase
 
 	[HttpGet]
 	[Route("GetAllRecipes")]
-	public async Task<List<RecipeModel>> GetAllRecipes()
+	public async Task<List<DisplayRecipeListModel>> GetAllRecipes()
 	{
 		var allRecipes = await _context.Recipes.Include(c => c.Cuisine)
 												.Include(d => d.Difficulty)
 												.Include(m => m.Meal)
-												.Include(u => u.Author).ToListAsync();
+												.Include(u => u.Author)
+												.Include(r=>r.Rating).ToListAsync();
 
-		return allRecipes;
-	}
+		List<DisplayRecipeListModel> list = new List<DisplayRecipeListModel>();
+		
+
+        foreach (var item in allRecipes)
+        {
+			DisplayRecipeListModel recipe = new DisplayRecipeListModel();
+			recipe.Id = item.Id;
+			recipe.Title = item.Title;
+			recipe.Meal = item.Meal;
+			recipe.Author = item.Author;
+			recipe.Difficulty = item.Difficulty;
+			recipe.CreationDateTime = item.CreationDateTime;
+			recipe.Description = item.Description;
+			recipe.CookingTime = item.CookingTime;
+			recipe.Cuisine = item.Cuisine;
+			recipe.RatingCount = item.Rating.Count;
+			if (item.Rating.Count > 0)
+			{
+				recipe.MeanRating = item.Rating.Select(rating => rating.Value).Average();
+			}
+			else { recipe.MeanRating = 0; }
+			list.Add(recipe);
+        }
+
+		return list;
+    }
 
 	[HttpPost]
 	[Authorize]
-	public async Task<IActionResult> CreateRecipe(CreationRecipeModel newRecipe)
+	[Route("CreateRecipe")]
+	public async Task<IActionResult> CreateRecipe(CreateUpdateRecipeModel newRecipe)
 	{
 		try
 		{
@@ -51,10 +77,10 @@ public  class RecipesController : ControllerBase
 				Id = newRecipe.Id,
 				Title = newRecipe.Title,
 				Cuisine = newRecipe.Cuisine,
-				Meal = newRecipe.Meal,
+				Meal = GetMeal(newRecipe.MealId),
 				CookingTime = newRecipe.CookingTime,
 				Description = newRecipe.Description,
-				Difficulty = newRecipe.Difficulty,
+				Difficulty = GetDifficulty(newRecipe.DifficultyId),
 				CreationDateTime = DateTime.UtcNow,
 				Author = author
 			};
@@ -75,35 +101,40 @@ public  class RecipesController : ControllerBase
 
 	[HttpPut]
 	[Authorize]
-
-	public async Task<IActionResult> UpdateRecipe(UpdateRecipeModel updateRecipe)
+	[Route("UpdateRecipe")]
+	public async Task<IActionResult> UpdateRecipe(CreateUpdateRecipeModel updateRecipe)
 	{
 		try
 		{
 			var author = GetAuthor();
 
-			if(author is null)
+			if (author is null)
 			{
 				throw new Exception("Cant find User");
 			}
 
-
-			RecipeModel changedRecipe= new()
+			var recipe = _context.Recipes.FirstOrDefault(r=> r.Id == updateRecipe.Id);
+			if (recipe is not null)
 			{
-				Id = updateRecipe.Id,
-				Title = updateRecipe.Title,
-				Description = updateRecipe.Description,
-				CookingTime = updateRecipe.CookingTime,
-				Cuisine = updateRecipe.Cuisine,
-				Meal = updateRecipe.Meal,
-				Difficulty = updateRecipe.Difficulty,
-				CreationDateTime = DateTime.UtcNow,
-				Author = author
-			};
+				recipe.Id = updateRecipe.Id;
+				recipe.Title = updateRecipe.Title;
+				recipe.Description = updateRecipe.Description;
+				recipe.CookingTime = updateRecipe.CookingTime;
+				recipe.Cuisine = updateRecipe.Cuisine;
+				recipe.Meal = GetMeal(updateRecipe.MealId);
+				recipe.Difficulty = GetDifficulty(updateRecipe.DifficultyId);
+				recipe.Author = author;
 
-			_context.Recipes.Update(changedRecipe);
-			await _context.SaveChangesAsync();
-			return Ok();
+				_context.Recipes.Update(recipe);
+				await _context.SaveChangesAsync();
+				return Ok();
+			}
+			else
+			{
+				return BadRequest();
+			}
+
+			
 		}
 		catch (Exception ex)
 		{
@@ -113,12 +144,12 @@ public  class RecipesController : ControllerBase
 	}
 
 	[HttpDelete]
-	[Route("/delete/{id}")]
+	[Route("delete/{id}")]
 	[Authorize]
 
-	public async Task<IActionResult> DeleteRecipe(int recipeId)
+	public async Task<IActionResult> DeleteRecipe(int id)
 	{
-		var recipe = await _context.Recipes.FindAsync(recipeId);
+		var recipe = await _context.Recipes.FindAsync(id);
 
 		if (recipe is not null)
 		{
@@ -129,7 +160,7 @@ public  class RecipesController : ControllerBase
 		return BadRequest();
 	}
 
-	
+
 	private UserModel GetAuthor()
 	{
 		var authorObjId = User.Claims.FirstOrDefault(c => c.Type.Contains("objectidentifier"))?.Value;
@@ -137,4 +168,16 @@ public  class RecipesController : ControllerBase
 		return author;
 	}
 
+	private DifficultyModel GetDifficulty(int difficultyId)
+	{
+		DifficultyModel difficulty = _context.Difficulty.Find(difficultyId);
+		return difficulty;
+	}
+
+	private MealModel GetMeal(int mealId)
+	{
+		MealModel meal = _context.Meals.Find(mealId);
+		return meal;
+
+	}
 }
