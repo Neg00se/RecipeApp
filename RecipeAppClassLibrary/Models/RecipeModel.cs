@@ -15,10 +15,9 @@ public class RecipeModel
 	[MaxLength(50)]
 	public string Title { get; set; }
 
-	[Range(0, 5)]
-	public int? Rating { get; set; } = null;
+	public List<RatingModel> Rating { get; set; } = new List<RatingModel>();
 
-	public CuisineModel Cuisine { get; set; }
+	public CuisineModel? Cuisine { get; set; }
 
 	public MealModel Meal { get; set; }
 

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RecipeAppClassLibrary.Data;
 
@@ -11,9 +12,11 @@ using RecipeAppClassLibrary.Data;
 namespace RecipeAppClassLibrary.Migrations
 {
     [DbContext(typeof(RecipeAppDbContext))]
-    partial class RecipeAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230814180805_RatingSystem")]
+    partial class RatingSystem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,7 +44,7 @@ namespace RecipeAppClassLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Cuisines", (string)null);
+                    b.ToTable("Cuisines");
                 });
 
             modelBuilder.Entity("RecipeAppClassLibrary.Models.DifficultyModel", b =>
@@ -63,7 +66,7 @@ namespace RecipeAppClassLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Difficulty", (string)null);
+                    b.ToTable("Difficulty");
                 });
 
             modelBuilder.Entity("RecipeAppClassLibrary.Models.MealModel", b =>
@@ -85,7 +88,7 @@ namespace RecipeAppClassLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Meals", (string)null);
+                    b.ToTable("Meals");
                 });
 
             modelBuilder.Entity("RecipeAppClassLibrary.Models.RatingModel", b =>
@@ -111,7 +114,7 @@ namespace RecipeAppClassLibrary.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Ratings", (string)null);
+                    b.ToTable("Ratings");
                 });
 
             modelBuilder.Entity("RecipeAppClassLibrary.Models.RecipeModel", b =>
@@ -159,7 +162,7 @@ namespace RecipeAppClassLibrary.Migrations
 
                     b.HasIndex("MealId");
 
-                    b.ToTable("Recipes", (string)null);
+                    b.ToTable("Recipes");
                 });
 
             modelBuilder.Entity("RecipeAppClassLibrary.Models.UserModel", b =>
@@ -194,7 +197,7 @@ namespace RecipeAppClassLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("RecipeAppClassLibrary.Models.RatingModel", b =>

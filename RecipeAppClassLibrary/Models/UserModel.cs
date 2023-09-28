@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace RecipeAppClassLibrary.Models;
@@ -12,8 +13,7 @@ public class UserModel
 {
 	public Guid Id { get; set; }
 
-
-	//TODO - delete these prop
+	[JsonIgnore]
 	public string ObjectIdentifier { get; set; } = null!;
 
 	[MaxLength(20)]
@@ -28,5 +28,7 @@ public class UserModel
 	[MaxLength(50)]
 	public string Email { get; set; } = null!;
 
+	[JsonIgnore]
+	public List<RatingModel> UserRates { get; set; } = new List<RatingModel>();
 
 }

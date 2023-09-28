@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RecipeAppClassLibrary.Data;
 
@@ -11,9 +12,11 @@ using RecipeAppClassLibrary.Data;
 namespace RecipeAppClassLibrary.Migrations
 {
     [DbContext(typeof(RecipeAppDbContext))]
-    partial class RecipeAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230730140734_NullableCuisines")]
+    partial class NullableCuisines
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,7 +44,7 @@ namespace RecipeAppClassLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Cuisines", (string)null);
+                    b.ToTable("Cuisines");
                 });
 
             modelBuilder.Entity("RecipeAppClassLibrary.Models.DifficultyModel", b =>
@@ -63,7 +66,7 @@ namespace RecipeAppClassLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Difficulty", (string)null);
+                    b.ToTable("Difficulty");
                 });
 
             modelBuilder.Entity("RecipeAppClassLibrary.Models.MealModel", b =>
@@ -85,33 +88,7 @@ namespace RecipeAppClassLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Meals", (string)null);
-                });
-
-            modelBuilder.Entity("RecipeAppClassLibrary.Models.RatingModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("RecipeId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Value")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RecipeId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Ratings", (string)null);
+                    b.ToTable("Meals");
                 });
 
             modelBuilder.Entity("RecipeAppClassLibrary.Models.RecipeModel", b =>
@@ -144,6 +121,9 @@ namespace RecipeAppClassLibrary.Migrations
                     b.Property<int>("MealId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("Rating")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -159,7 +139,7 @@ namespace RecipeAppClassLibrary.Migrations
 
                     b.HasIndex("MealId");
 
-                    b.ToTable("Recipes", (string)null);
+                    b.ToTable("Recipes");
                 });
 
             modelBuilder.Entity("RecipeAppClassLibrary.Models.UserModel", b =>
@@ -194,26 +174,7 @@ namespace RecipeAppClassLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
-                });
-
-            modelBuilder.Entity("RecipeAppClassLibrary.Models.RatingModel", b =>
-                {
-                    b.HasOne("RecipeAppClassLibrary.Models.RecipeModel", "Recipe")
-                        .WithMany("Rating")
-                        .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RecipeAppClassLibrary.Models.UserModel", "User")
-                        .WithMany("UserRates")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Recipe");
-
-                    b.Navigation("User");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("RecipeAppClassLibrary.Models.RecipeModel", b =>
@@ -247,16 +208,6 @@ namespace RecipeAppClassLibrary.Migrations
                     b.Navigation("Difficulty");
 
                     b.Navigation("Meal");
-                });
-
-            modelBuilder.Entity("RecipeAppClassLibrary.Models.RecipeModel", b =>
-                {
-                    b.Navigation("Rating");
-                });
-
-            modelBuilder.Entity("RecipeAppClassLibrary.Models.UserModel", b =>
-                {
-                    b.Navigation("UserRates");
                 });
 #pragma warning restore 612, 618
         }
