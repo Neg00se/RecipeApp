@@ -25,21 +25,23 @@ public class UserController : ControllerBase
 	[HttpGet]
 	[Authorize]
 	[Route("Profile")]
-	public async Task<UserProfileModel> GetUserProfile()
+	public async Task<UserProfileModel> GetLoggedInUserProfile()
 	{
 		var objectId = User.Claims.FirstOrDefault(c => c.Type.Contains("objectidentifier"))?.Value;
 
-		var user = await _context.Users.FirstOrDefaultAsync(u => u.ObjectIdentifier == objectId);
+		var user = await _context.Users.Include(r=>r.UserRates).FirstOrDefaultAsync(u => u.ObjectIdentifier == objectId);
 
-		List<RecipeModel> recipes = _context.Recipes.Where(x => x.Author.Id == user.Id).ToList();
+		List<RecipeModel> recipes = await _context.Recipes.Include(r=>r.Rating).Where(x => x.Author.Id == user.Id).ToListAsync();
 
 
 		UserProfileModel profile = new()
-		{
+		{Id = user.Id.ToString() ,
 			UserName = user.UserName,
 			Email = user.Email,
 			AuthoredRecipesCount = recipes.Count,
-			Recipes = recipes
+			Recipes = recipes , 
+			UserRates = user.UserRates
+			
 		};
 
 
