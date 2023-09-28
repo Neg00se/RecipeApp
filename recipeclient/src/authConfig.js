@@ -66,8 +66,8 @@ export const msalConfig = {
 export const protectedResourses = {
   recipeApi: {
     endpoints: {
-      getAll: ["https://localhost:7178/api/Recipes/GetAllRecipes"],
-      profile: ["https://localhost:7178/api/User/Profile"],
+      profile: "https://localhost:7178/api/User/Profile",
+      createRecipe: "https://localhost:7178/api/Recipes/CreateRecipe",
     },
     scopes: {
       readwrite: ["https://zalupaauth.onmicrosoft.com/recipe-api/readwrite"],
