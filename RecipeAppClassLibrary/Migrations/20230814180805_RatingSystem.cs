@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace RecipeAppClassLibrary.Migrations
+namespace RecipeAppData.Migrations
 {
     /// <inheritdoc />
     public partial class RatingSystem : Migration

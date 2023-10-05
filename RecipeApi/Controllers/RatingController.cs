@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using RecipeAppClassLibrary.Data;
-using RecipeAppClassLibrary.Models;
+using RecipeAppData.Models;
+using RecipeAppData.Data;
 
 namespace RecipeApi.Controllers;
 

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
-using RecipeAppClassLibrary.Data;
+using RecipeAppData.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

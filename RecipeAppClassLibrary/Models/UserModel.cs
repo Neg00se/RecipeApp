@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace RecipeAppClassLibrary.Models;
+namespace RecipeAppData.Models;
 
 public class UserModel
 {

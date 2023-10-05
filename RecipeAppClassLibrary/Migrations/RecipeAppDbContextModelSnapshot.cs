@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using RecipeAppClassLibrary.Data;
+using RecipeAppData.Data;
 
 #nullable disable
 
-namespace RecipeAppClassLibrary.Migrations
+namespace RecipeAppData.Migrations
 {
-    [DbContext(typeof(RecipeAppDbContext))]
+	[DbContext(typeof(RecipeAppDbContext))]
     partial class RecipeAppDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

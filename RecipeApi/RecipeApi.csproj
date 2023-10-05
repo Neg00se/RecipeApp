@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RecipeAppClassLibrary\RecipeAppClassLibrary.csproj" />
+    <ProjectReference Include="..\RecipeAppClassLibrary\RecipeAppData.csproj" />
   </ItemGroup>
 
 </Project>

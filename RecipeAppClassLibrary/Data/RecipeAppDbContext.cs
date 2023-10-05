@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RecipeAppClassLibrary.Models;
+using RecipeAppData.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RecipeAppClassLibrary.Data;
+namespace RecipeAppData.Data;
 
 public class RecipeAppDbContext : DbContext
 {

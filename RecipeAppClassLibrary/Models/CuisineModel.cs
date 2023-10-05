@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RecipeAppClassLibrary.Models;
+namespace RecipeAppData.Models;
 
 public class CuisineModel
 {
-    public int Id { get; set; }
+	public int Id { get; set; }
 	[MaxLength(50)]
 	public string CuisineName { get; set; }
-    public string CuisineDescription { get; set; }
+	public string CuisineDescription { get; set; }
 }

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RecipeAppClassLibrary.Models;
+namespace RecipeAppData.Models;
 
 public class MealModel
 {

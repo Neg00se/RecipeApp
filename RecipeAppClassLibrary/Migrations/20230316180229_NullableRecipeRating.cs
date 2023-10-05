@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace RecipeAppClassLibrary.Migrations
+namespace RecipeAppData.Migrations
 {
     /// <inheritdoc />
     public partial class NullableRecipeRating : Migration

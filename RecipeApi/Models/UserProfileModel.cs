@@ -1,4 +1,4 @@
-﻿using RecipeAppClassLibrary.Models;
+﻿using RecipeAppData.Models;
 
 namespace RecipeApi.Models;
 
