@@ -24,9 +24,9 @@ public class RecipeRepository : IRecipeRepository
         _context.Recipes.Add(recipe);
     }
 
-    public void DeleteRecipe(int id)
+    public async Task DeleteRecipe(int id)
     {
-        var recipe = _context.Recipes.FirstOrDefault(x => x.Id == id);
+        var recipe = await _context.Recipes.FindAsync(id);
         if (recipe is not null)
         {
             _context.Recipes.Remove(recipe);
