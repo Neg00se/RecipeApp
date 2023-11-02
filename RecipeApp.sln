@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeApi", "RecipeApi\Reci
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeAppData", "RecipeAppClassLibrary\RecipeAppData.csproj", "{FEF90F37-A708-4623-B3D7-1E2282D9850E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicesLayer", "Services\ServicesLayer.csproj", "{19DB07C0-BAA6-445B-B00D-B4A5E25ED3C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{889C1627-E213-496E-88DD-6B50F4C91EF9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{FEF90F37-A708-4623-B3D7-1E2282D9850E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FEF90F37-A708-4623-B3D7-1E2282D9850E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FEF90F37-A708-4623-B3D7-1E2282D9850E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19DB07C0-BAA6-445B-B00D-B4A5E25ED3C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19DB07C0-BAA6-445B-B00D-B4A5E25ED3C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19DB07C0-BAA6-445B-B00D-B4A5E25ED3C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19DB07C0-BAA6-445B-B00D-B4A5E25ED3C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{889C1627-E213-496E-88DD-6B50F4C91EF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{889C1627-E213-496E-88DD-6B50F4C91EF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{889C1627-E213-496E-88DD-6B50F4C91EF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{889C1627-E213-496E-88DD-6B50F4C91EF9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

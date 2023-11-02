@@ -19,6 +19,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RecipeAppClassLibrary\RecipeAppData.csproj" />
+    <ProjectReference Include="..\Services\ServicesLayer.csproj" />
+    <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 
 </Project>
