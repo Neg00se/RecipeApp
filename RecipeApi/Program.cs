@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
+using RecipeApi;
 using RecipeAppData.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,6 +32,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddDbContext<RecipeAppDbContext>(options => options.UseSqlServer(
 	   builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+
+builder.Services.AddRepositories();
+
+
 
 var app = builder.Build();
 
