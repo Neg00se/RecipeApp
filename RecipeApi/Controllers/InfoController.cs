@@ -25,7 +25,9 @@ namespace RecipeApi.Controllers
 
 		public async Task<List<MealModel>> GetMeals()
 		{
+			
 			return await _context.Meals.ToListAsync();
+			
 		}
 
 		[HttpGet]
@@ -34,6 +36,7 @@ namespace RecipeApi.Controllers
 		public async Task<List<DifficultyModel>> GetDifficulties()
 		{
 			return await _context.Difficulty.ToListAsync();
+			
 		}
 
 

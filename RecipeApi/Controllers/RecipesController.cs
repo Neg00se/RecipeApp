@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using RecipeApi.Models;
 using RecipeAppData.Models;
 using RecipeAppData.Data;
+using Shared.DtoModels;
 
 namespace RecipeApi.Controllers;
 
@@ -21,6 +22,8 @@ public class RecipesController : ControllerBase
 		_context = context;
 	}
 
+	//TODO: move data operations to new data layer
+
 	[HttpGet]
 	[Route("GetAllRecipes")]
 	public async Task<List<DisplayRecipeListModel>> GetAllRecipes()
@@ -33,6 +36,7 @@ public class RecipesController : ControllerBase
 
 		List<DisplayRecipeListModel> list = new List<DisplayRecipeListModel>();
 		
+
 
         foreach (var item in allRecipes)
         {
@@ -160,6 +164,7 @@ public class RecipesController : ControllerBase
 		return BadRequest();
 	}
 
+	//TODO: move everything below to helper class
 
 	private UserModel GetAuthor()
 	{

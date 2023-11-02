@@ -31,4 +31,7 @@ public class UserModel
 	[JsonIgnore]
 	public List<RatingModel> UserRates { get; set; } = new List<RatingModel>();
 
+	[JsonIgnore]
+	public List<RecipeModel> UserRecipes { get; set; } = new List<RecipeModel>();
+
 }
