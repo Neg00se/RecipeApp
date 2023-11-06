@@ -34,7 +34,6 @@ builder.Services.AddDbContext<RecipeAppDbContext>(options => options.UseSqlServe
 	   builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
-
 builder.Services.AddRepositories();
 
 

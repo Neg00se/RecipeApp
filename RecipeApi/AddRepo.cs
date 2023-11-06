@@ -8,7 +8,7 @@ namespace RecipeApi
 {
 	public static class AddRepo
 	{
-
+	
 		public static IServiceCollection AddRepositories(this IServiceCollection services)
 		{
 			services.AddScoped<IRecipeRepository , RecipeRepository>();
