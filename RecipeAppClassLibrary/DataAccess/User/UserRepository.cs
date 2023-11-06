@@ -29,14 +29,9 @@ public class UserRepository : IUserRepository
                                  .Include(u => u.UserRecipes)
                                  .FirstOrDefaultAsync(u => u.ObjectIdentifier == objectId);
 
-        if (user is not null)
-        {
+        
             return user;
-        }
-        else
-        {
-            throw new Exception();
-        }
+        
     }
 
     public void Update(UserModel user)
