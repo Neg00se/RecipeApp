@@ -11,44 +11,55 @@ namespace RecipeAppData.DataAccess.Recipe;
 
 public class RecipeRepository : IRecipeRepository
 {
-    private readonly RecipeAppDbContext _context;
+	private readonly RecipeAppDbContext _context;
 
-    public RecipeRepository(RecipeAppDbContext context)
-    {
-        _context = context;
-    }
+	public RecipeRepository(RecipeAppDbContext context)
+	{
+		_context = context;
+	}
 
-    public void CreateRecipe(RecipeModel recipe)
-    {
+	public void CreateRecipe(RecipeModel recipe)
+	{
 
-        _context.Recipes.Add(recipe);
-    }
+		_context.Recipes.Add(recipe);
+	}
 
-    public async Task DeleteRecipe(int id)
-    {
-        var recipe = await _context.Recipes.FindAsync(id);
-        if (recipe is not null)
-        {
-            _context.Recipes.Remove(recipe);
-        }
-    }
+	public async Task DeleteRecipe(int id)
+	{
+		var recipe = await _context.Recipes.FindAsync(id);
+		if (recipe is not null)
+		{
+			_context.Recipes.Remove(recipe);
+		}
+	}
 
-    public async Task<List<RecipeModel>> GetAllRecipes()
-    {
-        var recipes = await _context.Recipes.Include(r => r.Rating)
-                        .Include(r => r.Author)
-                        .Include(r => r.Cuisine)
-                        .Include(r => r.Meal)
-                        .Include(r => r.Difficulty).ToListAsync();
+	public async Task<List<RecipeModel>> GetAllRecipes()
+	{
+		var recipes = await _context.Recipes.Include(r => r.Rating)
+						.Include(r => r.Author)
+						.Include(r => r.Cuisine)
+						.Include(r => r.Meal)
+						.Include(r => r.Difficulty).ToListAsync();
 
-        return recipes;
-    }
+		return recipes;
+	}
 
-    public void UpdateRecipe(RecipeModel recipe)
-    {
-        var updateRecipe = _context.Recipes.FirstOrDefault(r => r.Id == recipe.Id);
+	public void UpdateRecipe(RecipeModel recipe)
+	{
+		 _context.Recipes.Update(recipe);
 
-        if (updateRecipe is not null) _context.Recipes.Update(updateRecipe);
+	}
 
-    }
+	public async Task<RecipeModel> GetRecipe(int id)
+	{
+		var recipe = await _context.Recipes.FindAsync(id);
+		if (recipe is not null)
+		{
+			return recipe;
+		}
+		else
+		{
+			throw new Exception();
+		}
+	}
 }

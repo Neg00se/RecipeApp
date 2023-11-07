@@ -13,6 +13,8 @@ public interface IRecipeRepository
 
     void CreateRecipe(RecipeModel recipe);
 
+    Task<RecipeModel> GetRecipe(int id);
+
     Task DeleteRecipe(int id);
 
     void UpdateRecipe(RecipeModel recipe);
