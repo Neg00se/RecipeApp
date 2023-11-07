@@ -1,4 +1,5 @@
-﻿using RecipeAppData.DataAccess;
+﻿using Microsoft.EntityFrameworkCore;
+using RecipeAppData.DataAccess;
 using RecipeAppData.DataAccess.Info;
 using RecipeAppData.DataAccess.Recipe;
 using RecipeAppData.DataAccess.User;
@@ -18,17 +19,20 @@ public class RecipeService : IRecipeService
 	private readonly IRecipeRepository _recipeRepo;
 	private readonly IUnitOfWork _unitOfWork;
 	private readonly IUserRepository _userRepo;
-	private readonly IInfoRepository _infoRepo;
+
+	private readonly IInfoService _infoService;
+
 
 	public RecipeService(IRecipeRepository recipeRepo,
 					  IUnitOfWork unitOfWork,
 					  IUserRepository userRepo,
-					  IInfoRepository infoRepo)
+					  IInfoService infoService)
 	{
 		_recipeRepo = recipeRepo;
 		_unitOfWork = unitOfWork;
 		_userRepo = userRepo;
-		_infoRepo = infoRepo;
+		_infoService = infoService;
+
 	}
 
 	public async Task<List<DisplayRecipeListModel>> GetAllRecipes()
@@ -63,11 +67,11 @@ public class RecipeService : IRecipeService
 		return list;
 	}
 
-	public async Task CreateRecipe(CreateUpdateRecipeModel newRecipe, string userObjId)
+	public async Task CreateRecipe(CreateUpdateRecipeModel newRecipe, UserModel user)
 	{
-		var author = await _userRepo.GetByObjId(userObjId);
-		var meal = await _infoRepo.GetMealById(newRecipe.MealId);
-		var difficulty = await _infoRepo.GetDifficultyById(newRecipe.DifficultyId);
+		
+		var meal = await _infoService.GetMealAsync(newRecipe.MealId);
+		var difficulty = await _infoService.GetDifficultyAsync(newRecipe.DifficultyId);
 
 		//TODO:Add Automapper here 
 		RecipeModel recipe = new()
@@ -80,7 +84,7 @@ public class RecipeService : IRecipeService
 			Description = newRecipe.Description,
 			Difficulty = difficulty,
 			CreationDateTime = DateTime.UtcNow,
-			Author = author
+			Author = user
 		};
 
 		_recipeRepo.CreateRecipe(recipe);
@@ -88,9 +92,34 @@ public class RecipeService : IRecipeService
 
 	}
 
-	public async Task UpdateRecipe(CreateUpdateRecipeModel newRecipe)
+	public async Task UpdateRecipe(CreateUpdateRecipeModel updatedRecipe, UserModel author)
 	{
-		throw new NotImplementedException();
+		var recipe = await _recipeRepo.GetRecipe(updatedRecipe.Id);
+
+		var meal = await _infoService.GetMealAsync(updatedRecipe.MealId);
+		var difficulty = await _infoService.GetDifficultyAsync(updatedRecipe.DifficultyId);
+
+
+
+		//TODO: AUTOMAPPER
+		if (recipe is not null)
+		{
+			recipe.Id = updatedRecipe.Id;
+			recipe.Title = updatedRecipe.Title;
+			recipe.Description = updatedRecipe.Description;
+			recipe.CookingTime = updatedRecipe.CookingTime;
+			recipe.Cuisine = updatedRecipe.Cuisine;
+			recipe.Meal = meal;
+			recipe.Difficulty = difficulty;
+			recipe.Author = author;
+
+			_recipeRepo.UpdateRecipe(recipe);
+			await _unitOfWork.SaveAsync();
+		}
+		else
+		{
+			throw new Exception();
+		}
 	}
 
 	public async Task DeleteRecipe(int id)
@@ -100,3 +129,4 @@ public class RecipeService : IRecipeService
 	}
 
 }
+
