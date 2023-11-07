@@ -5,7 +5,7 @@ namespace Shared.DtoModels;
 //TODO: Remove this model coz it not necessary anymore
 public class UserProfileModel
 {
-	public string Id { get; set; }
+	public Guid Id { get; set; }
 	public string UserName { get; set; }
 
 	public string Email { get; set; }

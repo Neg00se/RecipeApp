@@ -73,6 +73,7 @@ public class UserService : IUserService
 			{
 				_userRepo.Update(user);
 			}
+
 			await _unitOfWork.SaveAsync();
 		}
 	}
