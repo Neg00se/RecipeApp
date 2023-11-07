@@ -15,6 +15,7 @@ public interface IRatingRepository
 
     bool IsRateExist(int recipeId, Guid userId);
 
+    void UpdateRate(RatingModel rate);
 
     void DeleteRate(RatingModel rate);
 }

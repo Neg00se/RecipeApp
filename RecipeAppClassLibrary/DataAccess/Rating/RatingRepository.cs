@@ -46,4 +46,9 @@ public class RatingRepository : IRatingRepository
     {
         return _context.Ratings.Any(r => r.RecipeModelId == recipeId && r.UserModelId == userId);
     }
+
+	public void UpdateRate(RatingModel rate)
+	{
+        _context.Update(rate);
+	}
 }
