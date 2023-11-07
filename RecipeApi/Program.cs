@@ -35,6 +35,7 @@ builder.Services.AddDbContext<RecipeAppDbContext>(options => options.UseSqlServe
 
 
 builder.Services.AddRepositories();
+builder.Services.AddBusinesLogic();
 
 
 
