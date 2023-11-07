@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RecipeAppData.Models;
 using RecipeAppData.Data;
+using ServicesLayer;
 
 namespace RecipeApi.Controllers;
 
@@ -12,55 +13,30 @@ namespace RecipeApi.Controllers;
 
 public class RatingController : ControllerBase
 {
-	private readonly RecipeAppDbContext _context;
-	public RatingController(RecipeAppDbContext context)
+	private readonly IRatingService _ratingService;
+	private readonly IUserService _userService;
+
+	public RatingController(IRatingService ratingService, IUserService userService)
 	{
-		_context = context;
+		_ratingService = ratingService;
+		_userService = userService;
 	}
 
-
-	public record Rate (int recipeId , int value);
+	public record Rate(int recipeId, int value);
 
 	[HttpPost]
 	[Route("rateRecipe")]
 	public async Task RateRecipe(Rate rateInf)
 	{
-		Guid userId = GetUser().Id;
-		bool rateExist = _context.Ratings.Any(r=> r.RecipeModelId == rateInf.recipeId && r.UserModelId ==userId);
-		if (rateExist == false)
-		{
-			RatingModel rate = new RatingModel
-			{
-				RecipeModelId =rateInf.recipeId ,
-				Value = rateInf.value,
-				UserModelId = userId
+		var user = await _userService.GetCurrentUser(User);
 
-			};
-
-			await _context.Ratings.AddAsync(rate);
-			await _context.SaveChangesAsync(); 
-		}
-		else
-		{
-			await ChangeRate(rateInf);
-		}
+		await _ratingService.RateRecipe(rateInf.recipeId, rateInf.value, user);
 	}
+
 
 
 
 	
-	private async Task ChangeRate(Rate rateInf)
-	{
-		Guid userId = GetUser().Id;
-		RatingModel rate = _context.Ratings.FirstOrDefault(r => r.RecipeModelId == rateInf.recipeId && r.UserModelId == userId);
-
-		if (rate is not null)
-		{
-			rate.Value = rateInf.value;
-			await _context.SaveChangesAsync();
-			
-		}
-	}
 
 	[HttpDelete]
 	[Route("deleteRate/{recipeId}")]
@@ -68,10 +44,9 @@ public class RatingController : ControllerBase
 	{
 		try
 		{
-			Guid userId = GetUser().Id;
-			RatingModel rate = _context.Ratings.First(r => r.RecipeModelId == recipeId && r.UserModelId == userId);
-			_context.Ratings.Remove(rate);
-			await _context.SaveChangesAsync();
+			var user = await _userService.GetCurrentUser(User);
+			await _ratingService.DeleteRate(recipeId, user);
+			
 			return Ok();
 		}
 		catch (Exception ex)
@@ -82,11 +57,6 @@ public class RatingController : ControllerBase
 
 	}
 
-	private UserModel GetUser()
-	{
-		var authorObjId = User.Claims.FirstOrDefault(c => c.Type.Contains("objectidentifier"))?.Value;
-		var author = _context.Users.FirstOrDefault(u => u.ObjectIdentifier == authorObjId);
-		return author;
-	}
+	
 
 }

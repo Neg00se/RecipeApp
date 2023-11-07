@@ -2,9 +2,10 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using RecipeApi.Models;
 using RecipeAppData.Data;
 using RecipeAppData.Models;
+using ServicesLayer;
+using Shared.DtoModels;
 using System.Security.Claims;
 
 namespace RecipeApi.Controllers;
@@ -14,11 +15,11 @@ namespace RecipeApi.Controllers;
 [Authorize]
 public class UserController : ControllerBase
 {
-	private readonly RecipeAppDbContext _context;
+	private readonly IUserService _userService;
 
-	public UserController(RecipeAppDbContext context)
+	public UserController(IUserService userService)
 	{
-		_context = context;
+		_userService = userService;
 	}
 
 
@@ -27,21 +28,18 @@ public class UserController : ControllerBase
 	[Route("Profile")]
 	public async Task<UserProfileModel> GetLoggedInUserProfile()
 	{
-		var objectId = User.Claims.FirstOrDefault(c => c.Type.Contains("objectidentifier"))?.Value;
+		var user = await _userService.GetCurrentUser(User);
 
-		var user = await _context.Users.Include(r=>r.UserRates).FirstOrDefaultAsync(u => u.ObjectIdentifier == objectId);
-
-		List<RecipeModel> recipes = await _context.Recipes.Include(r=>r.Rating).Where(x => x.Author.Id == user.Id).ToListAsync();
-
-
+		//TODO: Automapper
 		UserProfileModel profile = new()
-		{Id = user.Id.ToString() ,
+		{
+			Id = user.Id,
 			UserName = user.UserName,
 			Email = user.Email,
-			AuthoredRecipesCount = recipes.Count,
-			Recipes = recipes , 
+			AuthoredRecipesCount = user.UserRecipes.Count,
+			Recipes = user.UserRecipes,
 			UserRates = user.UserRates
-			
+
 		};
 
 
@@ -55,8 +53,7 @@ public class UserController : ControllerBase
 	{
 		try
 		{
-			await CreateOrUpdate();
-			await _context.SaveChangesAsync();
+			await _userService.CreateOrUpdateUser(User);
 			return Ok();
 		}
 		catch (Exception ex)
@@ -66,61 +63,5 @@ public class UserController : ControllerBase
 		}
 
 	}
-
-
-	private async Task CreateOrUpdate()
-	{
-
-		string objectId = User.Claims.FirstOrDefault(c => c.Type.Contains("objectidentifier"))?.Value;
-
-		var user = await _context.Users.FirstOrDefaultAsync(u => u.ObjectIdentifier == objectId) ?? new();
-
-		string firstName = User.Claims.FirstOrDefault(c => c.Type.Contains("givenname"))?.Value;
-		string surname = User.Claims.FirstOrDefault(c => c.Type.Contains("surname"))?.Value;
-		string userName = User.Identity.Name;
-		string email = User.Claims.FirstOrDefault(c => c.Type.Contains("email"))?.Value;
-		bool isDirty = false;
-
-		if (objectId.Equals(user.ObjectIdentifier) == false)
-		{
-			isDirty = true;
-			user.ObjectIdentifier = objectId;
-		}
-		if (firstName.Equals(user.Name) == false)
-		{
-			isDirty = true;
-			user.Name = firstName;
-		}
-		if (surname.Equals(user.Surname) == false)
-		{
-			isDirty = true;
-			user.Surname = surname;
-		}
-		if (userName.Equals(user.UserName) == false)
-		{
-			isDirty = true;
-			user.UserName = userName;
-		}
-		if (email.Equals(user.Email) == false)
-		{
-			isDirty = true;
-			user.Email = email;
-		}
-		if (isDirty)
-		{
-			if (user.Id.ToString() is null)
-			{
-				_context.Users.Add(user);
-			}
-			else
-			{
-				_context.Users.Update(user);
-			}
-		}
-
-
-
-	}
-
 
 }

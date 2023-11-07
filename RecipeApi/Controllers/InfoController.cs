@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using RecipeApi.Models;
 using RecipeAppData.Models;
 using RecipeAppData.Data;
+using ServicesLayer;
 
 namespace RecipeApi.Controllers
 {
@@ -11,11 +11,11 @@ namespace RecipeApi.Controllers
 	[ApiController]
 	public class InfoController : ControllerBase
 	{
-		private readonly RecipeAppDbContext _context;
+		private readonly IInfoService _infoService;
 
-		public InfoController(RecipeAppDbContext context)
+		public InfoController(IInfoService infoService)
 		{
-			_context = context;
+			_infoService = infoService;
 		}
 
 
@@ -25,8 +25,8 @@ namespace RecipeApi.Controllers
 
 		public async Task<List<MealModel>> GetMeals()
 		{
-			
-			return await _context.Meals.ToListAsync();
+			var meals =await _infoService.GetMealsAsync();
+			return meals;
 			
 		}
 
@@ -35,7 +35,8 @@ namespace RecipeApi.Controllers
 
 		public async Task<List<DifficultyModel>> GetDifficulties()
 		{
-			return await _context.Difficulty.ToListAsync();
+			var difficulties = await _infoService.GetDifficultiesAsync();
+			return difficulties;
 			
 		}
 
